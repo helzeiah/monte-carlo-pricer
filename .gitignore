@@ -1,53 +1,69 @@
-/bin
-/obj
+# Build directories
+build/
+cmake-build-*/
+out/
+bin/
+obj/
 
-# Prerequisites
-*.d
+# CLion specific
+.idea/
+*.iml
+*.iws
+*.ipr
 
-# Compiled Object files
-*.slo
-*.lo
-*.o
-*.obj
-
-# Precompiled Headers
-*.gch
-*.pch
-
-# Compiled Dynamic libraries
-*.so
-*.dylib
-*.dll
-
-# Fortran module files
-*.mod
-*.smod
-
-# Compiled Static libraries
-*.lai
-*.la
-*.a
-*.lib
+# CMake
+CMakeCache.txt
+CMakeFiles/
+cmake_install.cmake
+Makefile
+compile_commands.json
+CTestTestfile.cmake
+_deps/
 
 # Executables
 *.exe
 *.out
 *.app
+monte_carlo_pricer
+option_pricer
+proj_monte_carlo_pricer
 
-# Ignore IDE & editor settings
+# Object files
+*.o
+*.obj
+*.ko
+*.elf
+
+# Libraries
+*.lib
+*.a
+*.la
+*.lo
+*.so
+*.dylib
+*.dll
+
+# OS specific
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# VS Code (if you ever use it)
 .vscode/
-.idea/
 
-# Ignore SDL2 resources
-res/
+# Debug files
+*.dSYM/
+*.su
+*.idb
+*.pdb
 
-# Ignore documentation configs
-Doxyfile
-
-# Build artifacts (if you’re using CLion/CMake)
-cmake-build-*/
-CMakeFiles/
-CMakeCache.txt
-build/
-bin/
-*.o *.obj *.exe
+# Backup files
+*.bak
+*~
+*.swp

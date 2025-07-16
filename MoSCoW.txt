@@ -7,9 +7,9 @@
 * Progress
 
 Must
-[ ] (Replace this text with a feature and check the [x] when it is done)
-[ ]
-[ ]
+[ ] Basic Option class to store option parameters
+[ ] Monte Carlo simulation class
+[ ] Calculate price for European Call options
 
 Should
 [ ]
