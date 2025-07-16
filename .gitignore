@@ -1,0 +1,53 @@
+/bin
+/obj
+
+# Prerequisites
+*.d
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Fortran module files
+*.mod
+*.smod
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Ignore IDE & editor settings
+.vscode/
+.idea/
+
+# Ignore SDL2 resources
+res/
+
+# Ignore documentation configs
+Doxyfile
+
+# Build artifacts (if you’re using CLion/CMake)
+cmake-build-*/
+CMakeFiles/
+CMakeCache.txt
+build/
+bin/
+*.o *.obj *.exe
