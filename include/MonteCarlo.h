@@ -20,12 +20,18 @@ class MonteCarlo {
   // stored simulation results
   std::vector<double> payoffs{};
 
-  mutable std::default_random_engine randomEngine{};
-  mutable std::normal_distribution<double> standardNormal{};
+  std::default_random_engine randomEngine{};
+  std::normal_distribution<double> standardNormal{};
 
   std::chrono::duration<double> lastRunDuration{};
-  bool priceCalculated{};
-  double cachedPrice{};
+  bool priceCalculated{false};
+  double cachedPrice{0.0};
+
+  // pre-calculated constants
+  const double stockPrice{};
+  const double sqrtTimeToMaturity{};
+  const double driftPerSim{};
+  const double volTimesSqrtT{};
 
  public:
   /**
@@ -53,7 +59,7 @@ class MonteCarlo {
    *
    * @return A copy of the option object being priced.
    */
-  Option getOption() const;
+  const Option& getOption() const;
 
   /**
    * @brief Gets the number of simulations used in this Monte Carlo object.
@@ -83,10 +89,10 @@ class MonteCarlo {
    * @brief Runs additional simulations specified by the given amount to
    * improve accuracy.
    *
-   * @param numSimulations The number of additional simulations.
+   * @param additionalSimulations The number of additional simulations.
    * @return The estimated price of the option.
    */
-  double runMoreSimulations(unsigned long numSimulations);
+  double runMoreSimulations(unsigned long additionalSimulations);
 
   /**
    * @brief Gets the standard error of the Monte Carlo estimate.
