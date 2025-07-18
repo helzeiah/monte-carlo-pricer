@@ -13,6 +13,8 @@ Option::Option(OptionType optType, double S, double K, double T, double r,
       maturityTime(T),
       riskFreeRate(r),
       volatility(sigma) {
+  // validate parameters, all must be positive except risk-free rate
+  // (can be negative in some cases)
   if (S <= 0 || K <= 0 || T <= 0 || sigma <= 0) {
     throw std::invalid_argument(
         "Parameters S, K, T, and sigma must be positive.");
@@ -33,8 +35,9 @@ double Option::getVolatility() const { return volatility; }
 
 double Option::calculatePayoff(double finalPrice) const {
   if (type == OptionType::CALL) {
+    // Call payoff -> max(S_T - K, 0)
     return std::max(finalPrice - strikePrice, 0.0);
-  }
+  } // Put payoff -> max(K - S_T, 0)
     return std::max(strikePrice - finalPrice, 0.0);
 }
 

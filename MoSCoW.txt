@@ -1,24 +1,48 @@
 * Summary
 
-(Replace this text with a short description of what your completed project should be here.)
+Helzeiah Oliveira
+-------------------------
+Solo Project - ~6/7 hours
+-- Option class 2 hours
+-- MonteCarlo class 4/5
 
-
+This project implements a Monte Carlo simulation engine for pricing European
+financial options. Using geometric Brownian motion to model stock price movements,
+it estimates a fit price for an option by simulating thousands of possible future price paths
+and calculating the average discounted payoff. This implementation includes
+professional risk metrics such as confidence intervals and Value at Risk (VaR), and easy-to-follow
+documentation and code making it good for both educational purposes and real financial analysis. :)
 
 * Progress
 
 Must
-[ ] Basic Option class to store option parameters
-[ ] Monte Carlo simulation class
-[ ] Calculate price for European Call options
+[x] Basic Option class to store option parameters
+[x] Monte Carlo simulation class for option pricing
+[x] Calculate price for European Call and Put options using Monte Carlo method
+[x] Error handling for invalid inputs
+[x] Geometric Brownian Motion simulation for stock paths
+[x] Payoff calculation for both call and put options
 
 Should
-[ ]
-[ ]
+[x] Standard error calculate for price estimates
+[x] 95% confidence intervals for statistical analysis
+[x] Value at Risk (VaR) calculation for risk management
+[x] Ability to run additional simulations
+[x] Performance timing and monitoring
+[x] Result caching to avoid recalculations
+[x] Reproducible results with a seed
 
 Could
-[ ]
-[ ]
+[ ] StockPath class for path-dependent options
+[ ] Greeks Calculation
+[ ] Black-Scholes pricing engine
+[ ] Portfolio managment class
+[ ] Multiple option types (American, Exotic, etc)
+[ ] Variance reduction
 
 Won't
-[ ]
-[ ]
+[ ] Use real time market data
+[ ] GUI
+[ ] Machine learning models
+[ ] Web API / network connectivity
+[ ] Database storage
