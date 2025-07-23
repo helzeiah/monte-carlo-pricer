@@ -9,4 +9,8 @@ add_executable(proj_monte_carlo_pricer
         src/main.cpp
         src/Option.cpp
         src/MonteCarlo.cpp
-        src/StockPath.cpp)
+        src/StockPath.cpp
+        include/Pricer.h
+        src/Pricer.cpp
+        include/Greeks.h
+)
