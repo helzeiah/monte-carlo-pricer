@@ -2,9 +2,12 @@
 
 Helzeiah Oliveira
 -------------------------
-Solo Project - ~6/7 hours
+Solo Project - ~12 hours
 -- Option class 2 hours
--- MonteCarlo class 4/5
+-- MonteCarlo class 4-5
+-- Pricer interface 1-2
+-- Option/Monte Carlo updates 1-2
+-- Greeks half hour
 
 This project implements a Monte Carlo simulation engine for pricing European
 financial options. Using geometric Brownian motion to model stock price movements,
@@ -16,6 +19,15 @@ documentation and code making it good for both educational purposes and real fin
 * Progress
 
 Must
+[x] Pricer base class
+[x] MonteCarlo inherits from pricer
+[x] Pure virtual function
+[x] Overridden function
+[x] Polymorphic function call
+[x] << Overloading x2
+[x] another overload (== for options)
+[x] static function
+[x] friend function
 [x] Basic Option class to store option parameters
 [x] Monte Carlo simulation class for option pricing
 [x] Calculate price for European Call and Put options using Monte Carlo method
@@ -24,6 +36,7 @@ Must
 [x] Payoff calculation for both call and put options
 
 Should
+[x] Greeks calculation
 [x] Standard error calculate for price estimates
 [x] 95% confidence intervals for statistical analysis
 [x] Value at Risk (VaR) calculation for risk management
@@ -31,11 +44,10 @@ Should
 [x] Performance timing and monitoring
 [x] Result caching to avoid recalculations
 [x] Reproducible results with a seed
+[ ] Add additional pricing engines that inherit from pricer
 
 Could
 [ ] StockPath class for path-dependent options
-[ ] Greeks Calculation
-[ ] Black-Scholes pricing engine
 [ ] Portfolio managment class
 [ ] Multiple option types (American, Exotic, etc)
 [ ] Variance reduction
