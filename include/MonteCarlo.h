@@ -61,15 +61,16 @@ class MonteCarlo : public Pricer {
   double calculatePrice() const override;
 
   /**
-   *
-   * @return
+   * @brief Gets the pricing method name.
+   * @return "Monte Carlo Pricer"
    */
   std::string getPricingMethod() const override;
 
   /**
-   *
+   * @brief Calculates option Greeks using finite differences.
+   * @return a Greeks struct with sensitivity values.
   */
-  Greeks calculateGreeks() const override;
+  Greeks calculateGreeks() override;
 
   /**
    * @brief Calculates a 95% confidence interval for the price estimate.
@@ -83,7 +84,7 @@ class MonteCarlo : public Pricer {
    *
    * @return The standard error of the price estimate
    */
-  double getStandardError() const;
+  double getStandardError() override;
 
   /**
    * @brief Calculates Value at Risk (VaR) at a 5% confidence level.

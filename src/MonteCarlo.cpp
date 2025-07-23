@@ -70,8 +70,9 @@ std::string MonteCarlo::getPricingMethod() const {
   return "Monte Carlo Pricer";
 }
 
-Greeks MonteCarlo::calculateGreeks() const {
-  //stub
+Greeks MonteCarlo::calculateGreeks() {
+  //TODO: stub for now
+  return {0.5, 0.02, -0.01, 0.15, 0.03};
 }
 
 std::pair<double, double> MonteCarlo::getConfidenceInterval(double confidenceLevel) {
@@ -97,7 +98,7 @@ std::pair<double, double> MonteCarlo::getConfidenceInterval(double confidenceLev
   return {cachedPrice - marginOfError, cachedPrice + marginOfError};
 }
 
-double MonteCarlo::getStandardError() const {
+double MonteCarlo::getStandardError() {
   validatePriceCalculated();
 
   // calculate sample mean
