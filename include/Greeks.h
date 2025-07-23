@@ -27,11 +27,11 @@ struct Greeks {
    * information inserted.
    */
   friend std::ostream& operator<<(std::ostream& os, const Greeks& greeks) {
-    os << "Greeks: [δ=" << std::fixed << std::setprecision(4) << greeks.delta
-       << " γ=" << greeks.gamma
-       << " θ=" << greeks.theta
-       << " ν=" << greeks.vega
-       << " ρ=" << greeks.rho << "]";
+    os << "Greeks: [delta=" << std::fixed << std::setprecision(4) << greeks.delta
+       << " gamma=" << greeks.gamma
+       << " theta=" << greeks.theta
+       << " vega=" << greeks.vega
+       << " rho=" << greeks.rho << "]";
     return os;
   }
 };
