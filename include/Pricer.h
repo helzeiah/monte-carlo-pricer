@@ -15,8 +15,8 @@
 class Pricer {
  protected:
   const Option& option;
-  bool priceCalculated{false};
-  double cachedPrice{0.0};
+  mutable bool priceCalculated{false};
+  mutable double cachedPrice{0.0};
   mutable std::chrono::duration<double> lastRunDuration{0.0};
 
  public:
