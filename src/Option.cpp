@@ -37,8 +37,8 @@ double Option::calculatePayoff(double finalPrice) const {
   if (type == OptionType::CALL) {
     // Call payoff -> max(S_T - K, 0)
     return std::max(finalPrice - strikePrice, 0.0);
-  } // Put payoff -> max(K - S_T, 0)
-    return std::max(strikePrice - finalPrice, 0.0);
+  }  // Put payoff -> max(K - S_T, 0)
+  return std::max(strikePrice - finalPrice, 0.0);
 }
 
 std::string Option::toString() const {
@@ -52,4 +52,42 @@ std::string Option::toString() const {
      << "Risk Free Rate: " << riskFreeRate * 100 << "%\n"
      << "Volatility: " << volatility * 100 << "%\n";
   return ss.str();
+}
+
+std::ostream& operator<<(std::ostream& os, const Option& option) {
+  os << option.toString();
+  return os;
+}
+
+bool Option::operator==(const Option& other) const {
+  const double epsilon = 1e-9;
+  return type == other.type &&
+         std::abs(stockPrice - other.stockPrice) < epsilon &&
+         std::abs(strikePrice - other.strikePrice) < epsilon &&
+         std::abs(maturityTime - other.maturityTime) < epsilon &&
+         std::abs(riskFreeRate - other.riskFreeRate) < epsilon &&
+         std::abs(volatility - other.volatility) < epsilon;
+}
+
+bool Option::operator<(const Option& other) const {
+  const double epsilon = 1e-9;
+  // sort by strike first
+  if (std::abs(strikePrice - other.strikePrice) > epsilon) {
+    return strikePrice < other.strikePrice;
+  }
+  // expiration if strikes are eq
+  if (std::abs(maturityTime - other.maturityTime) > epsilon) {
+    return maturityTime < other.maturityTime;
+  }
+  // by type last
+  return type < other.type;
+}
+
+Option Option::createCall(double S, double K, double T, double r,
+                          double sigma) {
+  return {OptionType::CALL, S, K, T, r, sigma};
+}
+
+Option Option::createPut(double S, double K, double T, double r, double sigma) {
+  return {OptionType::PUT, S, K, T, r, sigma};
 }

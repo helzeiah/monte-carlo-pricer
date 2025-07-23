@@ -1,6 +1,7 @@
 #ifndef OPTION_H
 #define OPTION_H
 #include <string>
+#include <vector>
 /**
  * @brief Represents the types of an Option.
  *
@@ -114,6 +115,65 @@ class Option {
    * @return A string representing the Option object.
    */
   std::string toString() const;
+
+  /**
+   *
+   *@brief Overloaded stream insertion operator for Option.
+   */
+  friend std::ostream& operator<<(std::ostream& os, const Option& option);
+
+  /**
+   *@brief Equality operator for Option comparison.
+   *
+   * Two options are considered equal iff all contract parameters match.
+   * Uses epsilon for numerical precision.
+   *
+   * @param the other Option to compare to
+   * @return true if the options represent the same contract
+  */
+  bool operator==(const Option& other) const;
+
+  /**
+   *@brief Less-than operator for Option sorting.
+   *
+   * Enables sorting options by Strike price, useful for portfolio organization.
+   *
+   * @param other the other Option to compare to
+   * @return true if this Option's strike price is less than the other's
+   */
+  bool operator<(const Option& other) const;
+
+  /**
+   * @brief Static factory method for creating call options
+   *
+   * Provides type-safe construction. Eliminates the possibility of accidentally
+   * inputting OptionType::PUT when creating a call option.
+   *
+   * @param S Stock price
+   * @param K Strike price
+   * @param T Time to maturity
+   * @param r Risk-free rate
+   * @param sigma volatility
+   * @return a Call option with specified parameters
+   */
+  static Option createCall(double S, double K, double T, double r,
+                           double sigma);
+
+  /**
+   * @brief Static factory method for creating put options
+   *
+   * Provides type-safe construction. Eliminates the possibility of accidentally
+   * inputting OptionType::CALL when creating a call option.
+   *
+   * @param S Stock price
+   * @param K Strike price
+   * @param T Time to maturity
+   * @param r Risk-free rate
+   * @param sigma volatility
+   * @return a Call option with specified parameters
+   */
+  static Option createPut(double S, double K, double T, double r, double sigma);
+
 };
 
 #endif
