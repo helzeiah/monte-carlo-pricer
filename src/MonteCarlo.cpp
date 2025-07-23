@@ -7,7 +7,7 @@
 
 MonteCarlo::MonteCarlo(const Option& option, unsigned long numSimulations,
                        unsigned int seed)
-    : option{option},
+    : Pricer{option},
       numSimulations{numSimulations},
       randomEngine{seed},
       standardNormal(0.0, 1.0),
@@ -30,11 +30,9 @@ MonteCarlo::MonteCarlo(const Option& option, unsigned long numSimulations,
 MonteCarlo::MonteCarlo(const Option& option, unsigned long numSimulations)
     : MonteCarlo(option, numSimulations, std::random_device()()) {}
 
-const Option& MonteCarlo::getOption() const { return option; }
-
 unsigned long MonteCarlo::getNumSimulations() const { return numSimulations; }
 
-double MonteCarlo::calculatePrice() {
+double MonteCarlo::calculatePrice() const {
   // if price is calculated -> dont calculate again
   if (priceCalculated) {
     return cachedPrice;
@@ -68,12 +66,69 @@ double MonteCarlo::calculatePrice() {
   return cachedPrice;
 }
 
-std::pair<double, double> MonteCarlo::getConfidenceInterval() const {
+std::string MonteCarlo::getPricingMethod() const {
+  return "Monte Carlo Pricer";
+}
+
+Greeks MonteCarlo::calculateGreeks() const {
+  //stub
+}
+
+std::pair<double, double> MonteCarlo::getConfidenceInterval(double confidenceLevel) {
   validatePriceCalculated();
+
+  if (confidenceLevel <= 0.0 || confidenceLevel >= 1.0) {
+    throw std::invalid_argument("Confidence level must be between 0 and 1");
+  }
+
+  double zScore;
+  if (confidenceLevel >= 0.99) {
+    zScore = 2.576;
+  } else if (confidenceLevel >= 0.95) {
+    zScore = 1.96;
+  } else if (confidenceLevel >= 0.90) {
+    zScore = 1.645;
+  } else {
+    zScore = 1.282;
+  }
   // 1.96 = z-score for 95% confidence interval on a normal distribution
-  double marginOfError{1.96 * getStandardError()};
+  double marginOfError{zScore * getStandardError()};
   // we want left an right bounds
   return {cachedPrice - marginOfError, cachedPrice + marginOfError};
+}
+
+double MonteCarlo::getStandardError() const {
+  validatePriceCalculated();
+
+  // calculate sample mean
+  double mean = 0.0;
+  for (double payoff : payoffs) {
+    mean += payoff;
+  }
+  mean /= payoffs.size();
+
+  // calculate sample variance
+  double variance = 0.0;
+  for (double payoff : payoffs) {
+    variance += (payoff - mean) * (payoff - mean);
+  }
+  // divide by n-1 to negate bias (Bessel's correction)
+  variance /= (payoffs.size() - 1);
+
+  // standard error = standard deviation / sqrt(n)
+  return std::sqrt(variance / payoffs.size());
+}
+
+double MonteCarlo::calculateVaR(double confidenceLevel) {
+  validatePriceCalculated();
+
+  // create copy to avoid modifying original
+  std::vector<double> sortedPayoffs{payoffs};
+  // the position of the 5% quantile
+  size_t varIndex{static_cast<size_t>(confidenceLevel * sortedPayoffs.size())};
+  // partial sort to find single quantile - more efficient than full sort
+  std::ranges::nth_element(sortedPayoffs, sortedPayoffs.begin() + varIndex);
+  return sortedPayoffs[varIndex];
 }
 
 double MonteCarlo::runMoreSimulations(unsigned long additionalSimulations) {
@@ -112,47 +167,7 @@ double MonteCarlo::runMoreSimulations(unsigned long additionalSimulations) {
   return cachedPrice;
 }
 
-double MonteCarlo::getStandardError() const {
-  validatePriceCalculated();
-
-  // calculate sample mean
-  double mean = 0.0;
-  for (double payoff : payoffs) {
-    mean += payoff;
-  }
-  mean /= payoffs.size();
-
-  // calculate sample variance
-  double variance = 0.0;
-  for (double payoff : payoffs) {
-    variance += (payoff - mean) * (payoff - mean);
-  }
-  // divide by n-1 to negate bias (Bessel's correction)
-  variance /= (payoffs.size() - 1);
-
-  // standard error = standard deviation / sqrt(n)
-  return std::sqrt(variance / payoffs.size());
-}
-
-double MonteCarlo::getLastRunDuration() const {
-  return lastRunDuration.count();
-}
-
-double MonteCarlo::calculateVaR() const {
-  validatePriceCalculated();
-
-  // create copy to avoid modifying original
-  std::vector<double> sortedPayoffs{payoffs};
-  // the position of the 5% quantile
-  size_t varIndex{static_cast<size_t>(0.05 * sortedPayoffs.size())};
-  // partial sort to find single quantile - more efficient than full sort
-  std::ranges::nth_element(sortedPayoffs, sortedPayoffs.begin() + varIndex);
-  return sortedPayoffs[varIndex];
-}
-
-bool MonteCarlo::isPriceCalculated() const { return priceCalculated; }
-
-double MonteCarlo::simulatePath() {
+double MonteCarlo::simulatePath() const {
   // generate random
   double rand{standardNormal(randomEngine)};
   // calculate price via Geometric Brownian Motion:

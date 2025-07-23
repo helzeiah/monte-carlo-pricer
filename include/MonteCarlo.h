@@ -1,10 +1,11 @@
 #ifndef MONTECARLO_H
 #define MONTECARLO_H
-#include <random>
-#include <vector>
 #include <chrono>
+#include <random>
 #include <utility>
+#include <vector>
 #include "Option.h"
+#include "Pricer.h"
 
 /**
  * @brief Monte Carlo Option pricer using geometric Brownian motion.
@@ -13,19 +14,14 @@
  * pricing. Uses geometric Brownian motion for stock price evolution and
  * includes statistical analysis capabilities for risk management applications.
  */
-class MonteCarlo {
-  Option option;
+class MonteCarlo : public Pricer {
   unsigned long numSimulations{};
 
   // stored simulation results
-  std::vector<double> payoffs{};
+  mutable std::vector<double> payoffs{};
 
-  std::default_random_engine randomEngine{};
-  std::normal_distribution<double> standardNormal{};
-
-  std::chrono::duration<double> lastRunDuration{};
-  bool priceCalculated{false};
-  double cachedPrice{0.0};
+  mutable std::default_random_engine randomEngine{};
+  mutable std::normal_distribution<double> standardNormal{};
 
   // pre-calculated constants
   const double stockPrice{};
@@ -55,20 +51,6 @@ class MonteCarlo {
              unsigned int seed);
 
   /**
-   * @brief Gets the option being priced by this Monte Carlo object.
-   *
-   * @return A copy of the option object being priced.
-   */
-  const Option& getOption() const;
-
-  /**
-   * @brief Gets the number of simulations used in this Monte Carlo object.
-   *
-   * @return The number of simulation paths used.
-   */
-  unsigned long getNumSimulations() const;
-
-  /**
    * @brief Calculates the option price using Monte Carlo simulation.
    *
    * Runs the specified number of simulations, calculates payoffs,
@@ -76,14 +58,39 @@ class MonteCarlo {
    *
    * @return The estimated price of the option.
    */
-  double calculatePrice();
+  double calculatePrice() const override;
+
+  /**
+   *
+   * @return
+   */
+  std::string getPricingMethod() const override;
+
+  /**
+   *
+  */
+  Greeks calculateGreeks() const override;
 
   /**
    * @brief Calculates a 95% confidence interval for the price estimate.
    *
    * @return A Pair containing (lower bound, upper bound) of the interval.
    */
-  std::pair<double, double> getConfidenceInterval() const;
+  std::pair<double, double> getConfidenceInterval(double confidenceLevel = 0.95) override;
+
+  /**
+   * @brief Gets the standard error of the Monte Carlo estimate.
+   *
+   * @return The standard error of the price estimate
+   */
+  double getStandardError() const;
+
+  /**
+   * @brief Calculates Value at Risk (VaR) at a 5% confidence level.
+   *
+   * @return The 5% VaR of the option payoff distribution
+   */
+  double calculateVaR(double confidenceLevel = 0.05) override;
 
   /**
    * @brief Runs additional simulations specified by the given amount to
@@ -95,32 +102,11 @@ class MonteCarlo {
   double runMoreSimulations(unsigned long additionalSimulations);
 
   /**
-   * @brief Gets the standard error of the Monte Carlo estimate.
+   * @brief Gets the number of simulations used in this Monte Carlo object.
    *
-   * @return The standard error of the price estimate
+   * @return The number of simulation paths used.
    */
-  double getStandardError() const;
-
-  /**
-   * @brief Gets the execution time of the last pricing calculation.
-   *
-   * @return The execution time in seconds
-   */
-  double getLastRunDuration() const;
-
-  /**
-   * @brief Calculates Value at Risk (VaR) at a 5% confidence level.
-   *
-   * @return The 5% VaR of the option payoff distribution
-   */
-  double calculateVaR() const;
-
-  /**
-   * @brief Checks if the option price has been calculated.
-   *
-   * @return True if calculatePrice() has been called successfully
-   */
-  bool isPriceCalculated() const;
+  unsigned long getNumSimulations() const;
 
  private:
   /**
@@ -131,7 +117,7 @@ class MonteCarlo {
    *
    * @return Final stock price at option maturity
    */
-  double simulatePath();
+  double simulatePath() const;
 
   /**
    * @brief Validates that price calculation has been performed.
