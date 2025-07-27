@@ -1,7 +1,6 @@
 #ifndef OPTION_H
 #define OPTION_H
 #include <string>
-#include <vector>
 /**
  * @brief Represents the types of an Option.
  *
@@ -17,12 +16,13 @@ enum class OptionType { CALL, PUT };
  * It includes the standard Black-Scholes parameters.
  */
 class Option {
-  OptionType type{};      // call/put
-  double stockPrice{};    // S
-  double strikePrice{};   // K
-  double maturityTime{};  // T
-  double riskFreeRate{};  // r
-  double volatility{};    // sigma
+  OptionType type{};       // call/put
+  double stockPrice{};     // S
+  double strikePrice{};    // K
+  double maturityTime{};   // T
+  double riskFreeRate{};   // r
+  double volatility{};     // sigma
+  double dividendYield{};  // q
 
  public:
   /**
@@ -35,9 +35,10 @@ class Option {
    * @param T the time until maturity
    * @param r the risk free rate
    * @param sigma the volatility
+   * @param q the dividend yield
    */
   Option(OptionType optType, double S, double K, double T, double r,
-         double sigma);
+         double sigma, double q = 0.0);
 
   /**
    * @brief Gets the type of this option.
@@ -95,6 +96,15 @@ class Option {
   double getVolatility() const;
 
   /**
+   * @brief Gets the dividend yield of this option.
+   *
+   * Returns the dividend yield (q) associated with this option.
+   *
+   * @return The dividend yield.
+   */
+  double getDividendYield() const;
+
+  /**
    * @brief Calculates the payoff of the option at maturity.
    *
    * Computes the payoff of the option based on its type (CALL or PUT)
@@ -106,42 +116,10 @@ class Option {
   double calculatePayoff(double finalPrice) const;
 
   /**
-   * @brief Produces a String representation of this Option object.
-   *
-   * Provides a string that represents the details of the Option object,
-   * including its parameters such as stock price, strike price, maturity time,
-   * risk-free rate, volatility, and type (CALL or PUT).
-   *
-   * @return A string representing the Option object.
-   */
-  std::string toString() const;
-
-  /**
    *
    *@brief Overloaded stream insertion operator for Option.
    */
   friend std::ostream& operator<<(std::ostream& os, const Option& option);
-
-  /**
-   *@brief Equality operator for Option comparison.
-   *
-   * Two options are considered equal iff all contract parameters match.
-   * Uses epsilon for numerical precision.
-   *
-   * @param the other Option to compare to
-   * @return true if the options represent the same contract
-  */
-  bool operator==(const Option& other) const;
-
-  /**
-   *@brief Less-than operator for Option sorting.
-   *
-   * Enables sorting options by Strike price, useful for portfolio organization.
-   *
-   * @param other the other Option to compare to
-   * @return true if this Option's strike price is less than the other's
-   */
-  bool operator<(const Option& other) const;
 
   /**
    * @brief Static factory method for creating call options
@@ -154,10 +132,11 @@ class Option {
    * @param T Time to maturity
    * @param r Risk-free rate
    * @param sigma volatility
+   * @param q Dividend Yield
    * @return a Call option with specified parameters
    */
   static Option createCall(double S, double K, double T, double r,
-                           double sigma);
+                           double sigma, double q = 0.0);
 
   /**
    * @brief Static factory method for creating put options
@@ -170,10 +149,11 @@ class Option {
    * @param T Time to maturity
    * @param r Risk-free rate
    * @param sigma volatility
+   * @param q Dividend Yield
    * @return a Call option with specified parameters
    */
-  static Option createPut(double S, double K, double T, double r, double sigma);
-
+  static Option createPut(double S, double K, double T, double r,
+                          double sigma, double q = 0.0);
 };
 
 #endif
