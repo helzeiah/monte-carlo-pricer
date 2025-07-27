@@ -115,15 +115,6 @@ class Pricer {
     }
     return cachedPrice;
   }
-
-  /**
-   * @brief Stream output operator.
-   *
-   * The output includes the pricing method, option details, and the calculated
-   * price of the option - if it was calculated.
-   *
-   */
-  friend std::ostream& operator<<(std::ostream& os, const Pricer& pricer);
 };
 
 #endif  // PRICER_H
