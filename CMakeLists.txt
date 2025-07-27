@@ -13,4 +13,6 @@ add_executable(proj_monte_carlo_pricer
         include/Pricer.h
         src/Pricer.cpp
         include/Greeks.h
+        include/BlackScholes.h
+        src/BlackScholes.cpp
 )
