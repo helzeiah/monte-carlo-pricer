@@ -10,8 +10,10 @@ add_executable(proj_monte_carlo_pricer
         src/Option.cpp
         src/MonteCarlo.cpp
         include/Pricer.h
-        src/Pricer.cpp
         include/Greeks.h
         include/BlackScholes.h
         src/BlackScholes.cpp
+        include/MathUtils.h
+        include/ImpliedVol.h
+        src/ImpliedVol.cpp
 )
