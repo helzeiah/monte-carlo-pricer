@@ -1,7 +1,6 @@
 #ifndef PRICER_H
 #define PRICER_H
 #include <chrono>
-#include <memory>
 
 #include "Greeks.h"
 #include "Option.h"
