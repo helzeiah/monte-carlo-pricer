@@ -22,6 +22,7 @@ class MonteCarlo : public Pricer {
 
   mutable std::default_random_engine randomEngine{};
   mutable std::normal_distribution<double> standardNormal{};
+  mutable std::vector<double> normals{};
 
   // pre-calculated constants
   const double stockPrice{};

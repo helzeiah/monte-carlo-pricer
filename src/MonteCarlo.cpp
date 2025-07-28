@@ -14,7 +14,7 @@ MonteCarlo::MonteCarlo(const Option& option, unsigned long numSimulations,
       stockPrice{option.getStockPrice()},
       sqrtTimeToMaturity{std::sqrt(option.getTimeToMaturity())},
       // pre-calculate drift term for efficiency: (r - σ²/2) * T
-      driftPerSim{(option.getRiskFreeRate() -
+      driftPerSim{(option.getRiskFreeRate() - option.getDividendYield() -
                    0.5 * option.getVolatility() * option.getVolatility()) *
                   option.getTimeToMaturity()},
       // pre-calculate volatility scaling: σ * √T
@@ -46,10 +46,13 @@ double MonteCarlo::calculatePrice() const {
       std::exp(-option.getRiskFreeRate() * option.getTimeToMaturity())};
 
   double sumPayoffs{0.0};
+  normals.resize(numSimulations);
   payoffs.resize(numSimulations);
 
   // Main loop - each simulation calculates and stores payoff, adding to sum
   for (unsigned long i = 0; i < numSimulations; ++i) {
+    double z = standardNormal(randomEngine);
+    normals[i] = z;
     double finalPrice{simulatePath()};
     payoffs[i] = option.calculatePayoff(finalPrice);
     sumPayoffs += payoffs[i];
@@ -71,11 +74,105 @@ std::string MonteCarlo::getPricingMethod() const {
 }
 
 Greeks MonteCarlo::calculateGreeks() {
-  //TODO: stub for now
-  return {0.5, 0.02, -0.01, 0.15, 0.03};
+  // Ensure base price & normals exist
+  calculatePrice();
+
+  const double S0 = option.getStockPrice();
+  const double T = option.getTimeToMaturity();
+  const double r = option.getRiskFreeRate();
+  const double q = option.getDividendYield();
+  const double sig = option.getVolatility();
+
+  if (T <= 1e-12 || sig <= 1e-12) return Greeks{};
+
+  const double epsS = std::max(S0 * 1e-4, 1e-6);
+  const double epsSig = std::max(sig * 1e-4, 1e-6);
+  const double epsR = std::max(std::abs(r) * 1e-4, 1e-6);
+  const double epsT = std::max(T * 1e-4, 1e-6);
+  const double Tdn = std::max(T - epsT, 1e-8);
+
+  // Base drift/vol
+  const double sqrtT = std::sqrt(T);
+  const double drift = (r - q - 0.5 * sig * sig) * T;
+  const double volBase = sig * sqrtT;
+  const double disc = std::exp(-r * T);
+
+  auto disc_rT = [](double r_, double T_) { return std::exp(-r_ * T_); };
+
+  // Bumped constants
+  const double S_up = S0 + epsS;
+  const double S_dn = std::max(S0 - epsS, 1e-8);
+
+  const double sigUp = sig + epsSig;
+  const double sigDn = std::max(sig - epsSig, 1e-12);
+
+  const double rUp = r + epsR;
+  const double rDn = r - epsR;
+
+  const double driftUpR = (rUp - q - 0.5 * sig * sig) * T;
+  const double driftDnR = (rDn - q - 0.5 * sig * sig) * T;
+
+  const double sqrtTdn = std::sqrt(Tdn);
+  const double driftTdn = (r - q - 0.5 * sig * sig) * Tdn;
+  const double volTdn = sig * sqrtTdn;
+
+  const double volUpSig = sigUp * sqrtT;
+  const double volDnSig = sigDn * sqrtT;
+
+  // Accumulators
+  double sumBase = 0, sumSup = 0, sumSdn = 0;
+  double sumSigUp = 0, sumSigDn = 0;
+  double sumRup = 0, sumRdn = 0;
+  double sumTdn = 0;
+
+  for (unsigned long i = 0; i < numSimulations; ++i) {
+    double z = normals[i];
+
+    double ST = S0 * std::exp(drift + volBase * z);
+    double ST_Su = S_up * std::exp(drift + volBase * z);
+    double ST_Sd = S_dn * std::exp(drift + volBase * z);
+    double ST_sigU = S0 * std::exp(drift + volUpSig * z);
+    double ST_sigD = S0 * std::exp(drift + volDnSig * z);
+    double ST_rU = S0 * std::exp(driftUpR + volBase * z);
+    double ST_rD = S0 * std::exp(driftDnR + volBase * z);
+    double ST_Td = S0 * std::exp(driftTdn + volTdn * z);
+
+    sumBase += option.calculatePayoff(ST);
+    sumSup += option.calculatePayoff(ST_Su);
+    sumSdn += option.calculatePayoff(ST_Sd);
+    sumSigUp += option.calculatePayoff(ST_sigU);
+    sumSigDn += option.calculatePayoff(ST_sigD);
+    sumRup += option.calculatePayoff(ST_rU);
+    sumRdn += option.calculatePayoff(ST_rD);
+    sumTdn += option.calculatePayoff(ST_Td);
+  }
+
+  const double invN = 1.0 / static_cast<double>(numSimulations);
+  const double priceB = sumBase * disc * invN;
+  const double priceSu = sumSup * disc * invN;
+  const double priceSd = sumSdn * disc * invN;
+  const double priceSigU = sumSigUp * disc * invN;
+  const double priceSigD = sumSigDn * disc * invN;
+
+  const double discUpR = disc_rT(rUp, T);
+  const double discDnR = disc_rT(rDn, T);
+  const double priceRu = sumRup * discUpR * invN;
+  const double priceRd = sumRdn * discDnR * invN;
+
+  const double discTd = disc_rT(r, Tdn);
+  const double priceTd = sumTdn * discTd * invN;
+
+  const double delta = (priceSu - priceSd) / (2.0 * epsS);
+  const double gamma = (priceSu - 2.0 * priceB + priceSd) / (epsS * epsS);
+  const double vega = (priceSigU - priceSigD) / (2.0 * epsSig);
+  const double rho = (priceRu - priceRd) / (2.0 * epsR);
+  const double theta = (priceTd - priceB) / (-epsT);
+
+  return Greeks{delta, gamma, theta, vega, rho};
 }
 
-std::pair<double, double> MonteCarlo::getConfidenceInterval(double confidenceLevel) {
+std::pair<double, double> MonteCarlo::getConfidenceInterval(
+    double confidenceLevel) {
   validatePriceCalculated();
 
   if (confidenceLevel <= 0.0 || confidenceLevel >= 1.0) {
