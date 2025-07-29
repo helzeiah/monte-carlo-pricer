@@ -1,7 +1,7 @@
 ![CI](https://github.com/helzeiah/monte-carlo-pricer/actions/workflows/ci.yml/badge.svg)
 # European Options Pricing Library (C++)
 
-A small C++20 library that prices European options via Black-Scholes (closed form) and Monte Carlo (Geometric Brownian Motion). This Library supporting Greeks calculation, implied volatility estimation, and provides statistical outputs like standard error, confidence intervals, and VaR. It has clean abstractions with the Pricer interface and is unit-tested with GoogleTest.
+A small C++20 library that prices European options via Black-Scholes (closed form) and Monte Carlo (Geometric Brownian Motion). This Library supports Greeks calculation, implied volatility estimation, and provides statistical outputs like standard error, confidence intervals, and VaR. It has clean abstractions with the Pricer interface and is unit-tested with GoogleTest.
 
 ---
 

@@ -18,7 +18,7 @@ static double parityGapBS(const Option& c, const Option& p) {
 }
 
 static double parityGapMC(const Option& c, const Option& p,
-                          unsigned long n = 200000, unsigned seed = 123) {
+                          unsigned long n = 1000000, unsigned seed = 123) {
   MonteCarlo mcC(c, n, seed);
   MonteCarlo mcP(p, n, seed);
   double C = mcC.calculatePrice();
