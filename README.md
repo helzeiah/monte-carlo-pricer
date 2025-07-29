@@ -190,7 +190,7 @@ This project is licensed under the [MIT License](./LICENSE) © 2025 Helzeiah Oli
 
 ## Acknowledgements
 
-* GoogleTest - unit-testing framework
+* GoogleTest - unit-testing framework (shoutout to the GoogleTest team)
 * Black & Scholes (1973) and Hull, Options, Futures, and Other Derivatives - formulas used for reference values.
 
 ---
