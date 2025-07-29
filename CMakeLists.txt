@@ -60,7 +60,7 @@ if (ENABLE_TESTS)
 endif()
 
 # --------- Documentation (DoxyGen) ---------------
-option(BUILD_DOCS "Generate Doxygen docs" OFF)
+option(BUILD_DOCS "Generate Doxygen docs" ON)
 
 if (BUILD_DOCS)
     find_package(Doxygen QUIET)
