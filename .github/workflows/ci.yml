@@ -1,0 +1,54 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+
+jobs:
+  build-test-docs:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash -eo pipefail {0}
+
+    steps:
+    # -- Checkout ----------------------------------------------------------------
+    - name: Checkout source
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    # -- Install dependencies -----------------------------------------------------
+    - name: Install build tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y ninja-build doxygen graphviz
+
+    # -- Configure & build --------------------------------------------------------
+    - name: Configure (CMake)
+      run: |
+        cmake -S . -B build \
+              -G Ninja \
+              -DCMAKE_BUILD_TYPE=Debug \
+              -DENABLE_TESTS=ON \
+              -DBUILD_DOCS=ON         # <- the option you added
+
+    - name: Build all targets
+      run: cmake --build build -j
+
+    # -- Unit-tests ---------------------------------------------------------------
+    - name: Run unit tests
+      run: ctest --test-dir build --output-on-failure
+
+    # -- Doxygen ------------------------------------------------------------------
+    - name: Generate Doxygen docs
+      run: cmake --build build --target doc
+
+    - name: Upload documentation artifact
+      if: success()
+      uses: actions/upload-artifact@v4
+      with:
+        name: api-docs
+        path: build/docs/html
