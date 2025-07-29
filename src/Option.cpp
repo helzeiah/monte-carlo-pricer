@@ -15,12 +15,17 @@ Option::Option(OptionType optType, double S, double K, double T, double r,
       dividendYield(q) {
   // validate parameters, all must be positive except risk-free rate
   // (can be negative in some cases)
-  if (S <= 0 || K <= 0 || T <= 0 || sigma <= 0) {
-    throw std::invalid_argument(
-        "Parameters S, K, T, and sigma must be positive.");
+  if (S <= 0 || K <= 0) {
+    throw std::invalid_argument("S and K must be > 0.");
   }
-  if (q < 0.0) {
-    throw std::invalid_argument("Dividend yield q must be >= 0.");
+  if (T < 0) {
+    throw std::invalid_argument("T must be >= 0.");
+  }
+  if (sigma < 0) {
+    throw std::invalid_argument("sigma must be >= 0.");
+  }
+  if (q < 0) {
+    throw std::invalid_argument("q must be >= 0.");
   }
 }
 

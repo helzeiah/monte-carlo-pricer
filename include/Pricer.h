@@ -19,6 +19,11 @@ class Pricer {
   mutable std::chrono::duration<double> lastRunDuration{0.0};
 
  public:
+  /**
+   * @brief Constructs this pricing engine with the given Option.
+   *
+   * @param option the option to price.
+   */
   explicit Pricer(const Option& option) : option(option) {}
   virtual ~Pricer() = default;
 

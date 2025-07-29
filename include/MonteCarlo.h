@@ -26,7 +26,6 @@ class MonteCarlo : public Pricer {
 
   // pre-calculated constants
   const double stockPrice{};
-  const double sqrtTimeToMaturity{};
   const double driftPerSim{};
   const double volTimesSqrtT{};
 
@@ -111,16 +110,6 @@ class MonteCarlo : public Pricer {
   unsigned long getNumSimulations() const;
 
  private:
-  /**
-   * @brief Simulates one stock price path to maturity.
-   *
-   * Uses geometric Brownian motion to evolve the stock price
-   * from current price to maturity.
-   *
-   * @return Final stock price at option maturity
-   */
-  double simulatePath() const;
-
   /**
    * @brief Validates that price calculation has been performed.
    *

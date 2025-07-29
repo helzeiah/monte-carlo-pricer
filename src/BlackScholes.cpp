@@ -1,4 +1,5 @@
 #include "BlackScholes.h"
+
 #include "MathUtils.h"
 
 double BlackScholes::calculatePrice() const {
