@@ -199,7 +199,9 @@ This project is licensed under the [MIT License](./LICENSE) © 2025 Helzeiah Oli
 
 Helzeiah Oliveira - helzeiaho@gmail.com
 
-*Price that option for me 5 :)*
+---
+
+*Price that option for me 5 🙂*
 
 
 
