@@ -21,8 +21,7 @@ A small C++20 library that prices European options via Black-Scholes (closed for
 ---
 
 ## Project Structure
-```
-monte-carlo-pricer/
+```monte-carlo-pricer/
 ├── CMakeLists.txt
 ├── include/
 │   ├── BlackScholes.h
@@ -37,19 +36,25 @@ monte-carlo-pricer/
 │   ├── ImpliedVol.cpp
 │   ├── MonteCarlo.cpp
 │   ├── Option.cpp
-│   └── main.cpp          # simple demo/driver
+│   └── main.cpp               # demo
 ├── tests/
 │   ├── BlackScholesTest.cpp
 │   ├── CachingAndStateTest.cpp
 │   ├── ImpliedVolTest.cpp
 │   ├── MathUtilsTest.cpp
-│   ├── MonteCarloTest.cpp      
+│   ├── MonteCarloTest.cpp
 │   ├── OptionTest.cpp
 │   ├── ParamGridTest.cpp
 │   ├── PricerInterfaceTest.cpp
 │   ├── PutCallParityTest.cpp
 │   └── TestUtils.h
-└── README.md (this file)
+├── docs/
+│   └── Doxyfile               # Doxygen configuration
+├── .github/
+│   └── workflows/
+│       └── ci.yml             # GitHub Actions (build + tests + docs)
+├── LICENSE
+└── README.md
 ```
 
 ---
@@ -175,7 +180,6 @@ To add a test, drop a `*.cpp` file into `tests/`—CMake auto-discovers it.
 - Add Binomial trees for American-style options
 - Implement Control Variates / Antithetic variates in MC
 - Path-dependent payoffs (Asian Barrier)
-- Documentation site (Doxygen)
 
 ---
 
