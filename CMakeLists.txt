@@ -60,21 +60,23 @@ if (ENABLE_TESTS)
 endif()
 
 # --------- Documentation (DoxyGen) ---------------
-option(BUILD_DOCS "Generate API documentation with Doxygen" ON)
+option(BUILD_DOCS "Generate Doxygen docs" OFF)
 
 if (BUILD_DOCS)
-    find_package(Doxygen REQUIRED dot)      # needs Graphviz for graphs
+    find_package(Doxygen QUIET)
+    if (DOXYGEN_FOUND)
+        set(DOXYFILE_IN  ${CMAKE_SOURCE_DIR}/docs/Doxyfile)
+        set(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
 
-    # Point Doxygen at the repo root; write the processed file to the build dir
-    set(DOXYFILE_IN  ${CMAKE_SOURCE_DIR}/Doxyfile)
-    set(DOXYFILE_OUT ${CMAKE_BINARY_DIR}/Doxyfile)
+        configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
 
-    configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
-
-    add_custom_target(doc
-            COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
-            WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-            COMMENT "Generating API documentation with Doxygen"
-            VERBATIM)
+        add_custom_target(docs
+                COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYFILE_OUT}
+                WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+                COMMENT "Generating API documentation with Doxygen"
+                VERBATIM)
+    else()
+        message(STATUS "Doxygen not found – docs target will be skipped")
+    endif()
 endif()
 
