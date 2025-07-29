@@ -44,7 +44,7 @@ jobs:
 
     # -- Doxygen ------------------------------------------------------------------
     - name: Generate Doxygen docs
-      run: cmake --build build --target doc
+      run: cmake --build build --target docs
 
     - name: Upload documentation artifact
       if: success()
